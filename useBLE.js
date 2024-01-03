@@ -66,6 +66,7 @@ function useBLE() {
     }
   };
 
+  // 디바이스 중복 제거
   const isDuplicteDevice = (devices, nextDevice) => {
     devices.findIndex((device) => nextDevice.id === device.id) > -1;
   };
@@ -111,15 +112,23 @@ function useBLE() {
     }
   };
 
+  // 앱 접근권한 허용 후 스캔 시작
+  const scanForDevices = async () => {
+    const isPermissionsEnabled = await requestPermissions();
+
+    if (isPermissionsEnabled) {
+      scanForPeripherals();
+    }
+  };
+
   return {
     scanForPeripherals,
     stopScanForPeripherals,
-    requestPermissions,
-    requestAndroid31Permissions,
     connectToDevice,
+    disconnectFromDevice,
+    scanForDevices,
     allDevices,
     connectedDevice,
-    disconnectFromDevice,
   };
 }
 
