@@ -71,7 +71,7 @@ useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구�
     }
   };
 </pre>
-allDevices state의 값중 연결을 원하는 기기의 id 값을 파라미터로 넘기면 해당 ble 기기와 연결이 되며, connectedDevice state 값에 데이터가 들어가게 됩니다.
+allDevices state의 값 중 연결을 원하는 기기의 id 값을 파라미터로 넘기면 해당 ble 기기와 연결이 되며, connectedDevice state 값에 데이터가 들어가게 됩니다.
 
 
 - 디바이스 연결 해제 (디바이스 id 값 지정후 해제)
