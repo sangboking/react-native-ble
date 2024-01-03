@@ -23,7 +23,7 @@ useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구�
     ...
   }
   export default useBLE;
-<pre/>
+</pre>
   
 
 - 디바이스 스캔 시작
