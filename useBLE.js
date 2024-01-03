@@ -66,12 +66,15 @@ function useBLE() {
     }
   };
 
-  // 디바이스 중복 제거
+  // 디바이스 스캔시 중복 제거
   const isDuplicteDevice = (devices, nextDevice) => {
     devices.findIndex((device) => nextDevice.id === device.id) > -1;
   };
 
-  // 디바이스 스캔 시작
+  /**
+   * 디바이스 스캔 시작
+   * 스캔된 디바이스중 device.name값이 존재하는 device를 allDevices 상태에 값 저장
+   */
   const scanForPeripherals = () =>
     bleManager.startDeviceScan(null, null, (error, device) => {
       if (error) {
@@ -87,12 +90,25 @@ function useBLE() {
       }
     });
 
+  // 앱 접근권한 허용 후 스캔 시작
+  const scanForDevices = async () => {
+    const isPermissionsEnabled = await requestPermissions();
+
+    if (isPermissionsEnabled) {
+      scanForPeripherals();
+    }
+  };
+
   //디바이스 스캔 중지
   const stopScanForPeripherals = () => {
     bleManager.stopDeviceScan();
   };
 
-  // 스캔된 디바이스 연결 (디바이스 id 값 지정후 연결)
+  /**
+   * 원하는 device와 연결
+   * allDevices 의 값 중 연결 하려는 device의 deviceId 값 을 파라미터로 전달
+   * @param {string} deviceId
+   */
   const connectToDevice = async (deviceId) => {
     try {
       const deviceConnection = await bleManager.connectToDevice(deviceId);
@@ -104,20 +120,16 @@ function useBLE() {
     }
   };
 
-  // 디바이스 연결 해제 (디바이스 id 값 지정후 해제)
+  /**
+   * 현재 연결된 device 연결 해제
+   * 현재 연결된 device의 deviceId 값 을 파라미터로 전달
+   * connectedDevice state에 데이터 들어가 있음
+   * @param {string} deviceId
+   */
   const disconnectFromDevice = (deviceId) => {
     if (connectedDevice) {
       bleManager.cancelDeviceConnection(deviceId);
       setConnectedDevice(null);
-    }
-  };
-
-  // 앱 접근권한 허용 후 스캔 시작
-  const scanForDevices = async () => {
-    const isPermissionsEnabled = await requestPermissions();
-
-    if (isPermissionsEnabled) {
-      scanForPeripherals();
     }
   };
 
