@@ -6,7 +6,6 @@ export default function App() {
     requestPermissions,
     requestAndroid31Permissions,
     scanForPeripherals,
-    stopScanForPeripherals,
     allDevices,
     connectToDevice,
     connectedDevice,
@@ -20,10 +19,9 @@ export default function App() {
       scanForPeripherals();
     }
   };
-  // scanForDevices();
-  // console.log(allDevices);
+  scanForDevices();
 
-  console.log(connectedDevice);
+  // console.log(allDevices);
   // connectToDevice("C7:58:3D:91:79:7B");
   // console.log(connectedDevice);
   // disconnectFromDevice("C7:58:3D:91:79:7B");
