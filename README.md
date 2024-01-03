@@ -55,14 +55,6 @@ useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구�
 </pre>
 
 
-- 디바이스 스캔 중지
-<pre>
-  // useBLE.js
- const stopScanForPeripherals = () => {
-    bleManager.stopDeviceScan();
-  };  
-</pre>
-
 
 - 스캔된 디바이스 연결 (디바이스 id 값 지정후 연결)
 <pre>
