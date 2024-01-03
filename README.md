@@ -12,24 +12,37 @@
 -------------
 useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구현했습니다.
 
+
+- ble 라이브러리 호출 및 선언
+<pre>
+  // useBLE.js
+  import { BleManager } from "react-native-ble-plx";
+
+  function useBLE() {
+    const bleManager = useMemo(() => new BleManager(), []);
+    ...
+  }
+  export default useBLE;
+  
+
 - 디바이스 스캔 시작
 <pre>
   // useBLE.js
-   const scanForPeripherals = () =>
-    bleManager.startDeviceScan(null, null, (error, device) => {
-      if (error) {
-        console.log(error);
-      }
-      if (device.name) {
-        setAllDevices((prevState) => {
-          if (!isDuplicteDevice(prevState, device)) {
-            return [...prevState, device];
-          }
-          return prevState;
-        });
-      }
-    });
-  
+ const scanForPeripherals = () =>
+  bleManager.startDeviceScan(null, null, (error, device) => {
+    if (error) {
+      console.log(error);
+    }
+    if (device.name) {
+      setAllDevices((prevState) => {
+        if (!isDuplicteDevice(prevState, device)) {
+          return [...prevState, device];
+        }
+        return prevState;
+      });
+    }
+  });  
 </pre>
+
 
 
