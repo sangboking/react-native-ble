@@ -66,7 +66,8 @@ useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구�
 
 - 스캔된 디바이스 연결 (디바이스 id 값 지정후 연결)
 <pre>
-   const connectToDevice = async (deviceId) => {
+  // useBLE.js
+  const connectToDevice = async (deviceId) => {
     try {
       const deviceConnection = await bleManager.connectToDevice(deviceId);
       setConnectedDevice(deviceConnection);
@@ -74,6 +75,31 @@ useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구�
       stopScanForPeripherals();
     } catch (e) {
       console.log("FAILED TO CONNECT", e);
+    }
+  };
+</pre>
+
+
+- 디바이스 연결 해제 (디바이스 id 값 지정후 해제)
+<pre>
+  // useBLE.js
+ const disconnectFromDevice = (deviceId) => {
+    if (connectedDevice) {
+      bleManager.cancelDeviceConnection(deviceId);
+      setConnectedDevice(null);
+    }
+  };
+</pre>
+
+
+- 앱 접근권한 허용 후 스캔 시작
+<pre>
+  // useBLE.js
+   const scanForDevices = async () => {
+    const isPermissionsEnabled = await requestPermissions();
+
+    if (isPermissionsEnabled) {
+      scanForPeripherals();
     }
   };
 </pre>
