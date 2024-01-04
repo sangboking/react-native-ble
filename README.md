@@ -10,6 +10,12 @@
 
 사용방법
 -------------
+yarn start 로 프로젝트 구동할수 있습니다.
+
+안드로이드 simulator 다운로드 가이드 : https://docs.expo.dev/workflow/android-studio-emulator/
+ios simulator 다운로드 가이드 : https://docs.expo.dev/workflow/ios-simulator/
+expo go(시뮬레이터 없이 핸드폰에서 테스트 할 경우) 가이드 : https://docs.expo.dev/get-started/expo-go/
+
 useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구현했습니다.
 
 
