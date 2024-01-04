@@ -45,6 +45,21 @@ useBLE.js 파일에 ble 기기의 스캔, 연결, 연결해제 로직들을 구�
   });  
 </pre>
 디바이스 스캔을 시작하면 allDevices state의 배열 안에 데이터가 순차적으로 들어가게 됩니다.
+데이터는 allDevices 배열 안에 아래와 같은 객체 형태로 들어가게 됩니다.
+{
+  id: "C7:58:3D:91:79:7B" //deviceId
+  isConnectable: null
+  localName: null
+  manufacturerData: null
+  mtu: 23
+  name: "SPD-BLE0890487"
+  overflowServiceUUIDs: null
+  rssi: null
+  serviceData: null
+  serviceUUIDs: null
+  solicitedServiceUUIDs: null
+  txPowerLevel: null
+}
 
 
 - 디바이스 스캔 중지
