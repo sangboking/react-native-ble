@@ -123,7 +123,8 @@ function useBLE() {
   /**
    * 현재 연결된 device 연결 해제
    * 현재 연결된 device의 deviceId 값 을 파라미터로 전달
-   * connectedDevice state에 데이터 들어가 있음
+   * 연결된 기기는 connectedDevice state에 데이터 들어가 있음
+   * 연결 해제 후 connectedDevice state는 초기화
    * @param {string} deviceId
    */
   const disconnectFromDevice = (deviceId) => {
