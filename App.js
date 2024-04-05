@@ -1,6 +1,13 @@
 import { WebView } from "react-native-webview";
 import useBLE from "./useBLE";
-import { Button, FlatList, SafeAreaView, Text, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { useState } from "react";
 
 const ScanDevice = ({ deviceId, name, connectToDevice }) => (
@@ -46,7 +53,7 @@ export default function App() {
     //   allowsBackForwardNavigationGestures={true}
     // />
 
-    <View style={{ paddingBottom: 30 }}>
+    <ScrollView style={{ paddingBottom: 30 }}>
       <View
         style={{
           flexDirection: "row",
@@ -130,6 +137,6 @@ export default function App() {
           />
         </>
       )}
-    </View>
+    </ScrollView>
   );
 }
