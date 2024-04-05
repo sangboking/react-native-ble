@@ -1,11 +1,12 @@
 import { WebView } from "react-native-webview";
 import useBLE from "./useBLE";
 import { Button, FlatList, SafeAreaView, Text, View } from "react-native";
+import { useState } from "react";
 
 const ScanDevice = ({ deviceId, name, connectToDevice }) => (
   <View style={{ backgroundColor: "lightblue", marginTop: 12 }}>
     <Text style={{ fontSize: 16 }}>{`deviceId : ${deviceId}`}</Text>
-    <Text>{`deviceName : ${name}`}1</Text>
+    <Text>{`deviceName : ${name}`}</Text>
     <Button
       color="gray"
       title="해당기기 연결하기"
@@ -17,7 +18,7 @@ const ScanDevice = ({ deviceId, name, connectToDevice }) => (
 const ConnectedDevice = ({ deviceId, name, disconnectFromDevice }) => (
   <View style={{ backgroundColor: "lightblue", marginTop: 12 }}>
     <Text style={{ fontSize: 16 }}>{`deviceId : ${deviceId}`}</Text>
-    <Text>{`deviceName : ${name}`}1</Text>
+    <Text>{`deviceName : ${name}`}</Text>
     <Button
       color="red"
       title="해당기기 연결 해제하기"
@@ -27,6 +28,7 @@ const ConnectedDevice = ({ deviceId, name, disconnectFromDevice }) => (
 );
 
 export default function App() {
+  const [toggle, setToggle] = useState(true);
   const {
     scanForPeripherals,
     stopScanForPeripherals,
@@ -43,52 +45,87 @@ export default function App() {
     //   source={{ uri: "https://expo.dev/" }}
     //   allowsBackForwardNavigationGestures={true}
     // />
+
     <View style={{ paddingBottom: 30 }}>
-      <Button
-        color="#f194ff"
-        title="디바이스 스캔 시작"
-        onPress={() => scanForDevices()}
-      />
-
-      <Button
-        title="디바이스 스캔 중지"
-        onPress={() => stopScanForPeripherals()}
-      />
-
-      {allDevices.length > 1 && (
-        <>
-          <Text style={{ fontSize: 18, marginTop: 20 }}>
-            스캔된 디바이스 리스트
-          </Text>
-          <SafeAreaView>
-            <FlatList
-              data={allDevices}
-              renderItem={(item) => (
-                <ScanDevice
-                  deviceId={item.item.id}
-                  name={item.item.name}
-                  connectToDevice={connectToDevice}
-                />
-              )}
-            />
-          </SafeAreaView>
-        </>
-      )}
-
       <View
         style={{
-          marginVertical: 8,
-          borderBottomColor: "#737373",
-          borderBottomWidth: 2,
-        }}
-      />
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
 
-      {connectedDevice && (
+          marginTop: 40,
+        }}
+      >
+        <Text
+          style={{
+            width: 100,
+            height: 30,
+            backgroundColor: "skyblue",
+            textAlign: "center",
+            verticalAlign: "middle",
+          }}
+          onPress={() => setToggle(true)}
+        >
+          디바이스 스캔
+        </Text>
+        <Text
+          style={{
+            width: 100,
+            height: 30,
+            backgroundColor: "pink",
+            textAlign: "center",
+            verticalAlign: "middle",
+            marginLeft: 20,
+          }}
+          onPress={() => setToggle(false)}
+        >
+          연결된 디바이스
+        </Text>
+      </View>
+
+      {toggle ? (
+        <>
+          <Button
+            color="#f194ff"
+            title="디바이스 스캔 시작"
+            onPress={() => scanForDevices()}
+          />
+
+          <Button
+            title="디바이스 스캔 중지"
+            onPress={() => stopScanForPeripherals()}
+          />
+
+          {allDevices.length >= 1 && (
+            <>
+              <Text style={{ fontSize: 18, marginTop: 20 }}>
+                스캔된 디바이스 리스트
+              </Text>
+              <SafeAreaView>
+                <FlatList
+                  data={allDevices}
+                  renderItem={(item) => (
+                    <ScanDevice
+                      deviceId={item.item.id}
+                      name={item.item.name}
+                      connectToDevice={connectToDevice}
+                    />
+                  )}
+                />
+              </SafeAreaView>
+            </>
+          )}
+        </>
+      ) : (
         <>
           <Text style={{ fontSize: 18, marginTop: 25 }}>연결된 디바이스</Text>
           <ConnectedDevice
-            deviceId={connectedDevice.id}
-            name={connectedDevice.name}
+            deviceId={
+              connectedDevice?.id ? connectedDevice?.id : "연결된 기기 없음"
+            }
+            name={
+              connectedDevice?.name ? connectedDevice?.name : "연결된 기기 없음"
+            }
             disconnectFromDevice={disconnectFromDevice}
           />
         </>
