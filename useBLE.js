@@ -75,7 +75,7 @@ function useBLE() {
    * 디바이스 스캔 시작
    * 스캔된 디바이스중 device.name값이 존재하는 device를 allDevices 상태에 값 저장
    */
-  const scanForPeripherals = () =>
+  const scanForPeripherals = () => {
     bleManager.startDeviceScan(null, null, (error, device) => {
       if (error) {
         console.log(error);
@@ -89,6 +89,7 @@ function useBLE() {
         });
       }
     });
+  };
 
   // 앱 접근권한 허용 후 스캔 시작
   const scanForDevices = async () => {
