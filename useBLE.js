@@ -7,8 +7,14 @@ import * as ExpoDevice from "expo-device";
 
 function useBLE() {
   const bleManager = useMemo(() => new BleManager(), []);
-  const [allDevices, setAllDevices] = useState([]);
-  const [connectedDevice, setConnectedDevice] = useState(null);
+  const [allDevices, setAllDevices] = useState({
+    type: "allDevices",
+    data: [],
+  });
+  const [connectedDevice, setConnectedDevice] = useState({
+    type: "connectedDevice",
+    data: null,
+  });
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -81,12 +87,15 @@ function useBLE() {
         console.log(error);
       }
       if (device.name) {
-        setAllDevices((prevState) => {
-          if (!isDuplicteDevice(prevState, device)) {
-            return [...prevState, device];
-          }
-          return prevState;
-        });
+        setAllDevices((prevState) => ({
+          ...prevState,
+          data: [...prevState.data, device],
+          // if (!isDuplicteDevicre(prevState, device)) {
+          //   return [...prevState, device];
+
+          // }
+          // return prevState;
+        }));
       }
     });
   };
@@ -97,12 +106,14 @@ function useBLE() {
 
     if (isPermissionsEnabled) {
       scanForPeripherals();
+      console.log("start");
     }
   };
 
   //디바이스 스캔 중지
   const stopScanForPeripherals = () => {
     bleManager.stopDeviceScan();
+    console.log("stop");
   };
 
   /**
@@ -113,7 +124,10 @@ function useBLE() {
   const connectToDevice = async (deviceId) => {
     try {
       const deviceConnection = await bleManager.connectToDevice(deviceId);
-      setConnectedDevice(deviceConnection);
+      setConnectedDevice((prevState) => ({
+        ...prevState,
+        data: deviceConnection,
+      }));
       await deviceConnection.discoverAllServicesAndCharacteristics();
       stopScanForPeripherals();
     } catch (e) {
@@ -128,10 +142,13 @@ function useBLE() {
    * 연결 해제 후 connectedDevice state는 초기화
    * @param {string} deviceId
    */
-  const disconnectFromDevice = (deviceId) => {
+  const disconnectFromDevice = async (deviceId) => {
     if (connectedDevice) {
-      bleManager.cancelDeviceConnection(deviceId);
-      setConnectedDevice(null);
+      await bleManager.cancelDeviceConnection(deviceId);
+      setConnectedDevice((prevState) => ({
+        ...prevState,
+        data: null,
+      }));
     }
   };
 
