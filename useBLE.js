@@ -22,8 +22,8 @@ function useBLE() {
     data: 0,
   });
 
-  const UUID = "0000180d-0000-1000-8000-00805f9b34fb";
-  const CHARACTER = "00002a37-0000-1000-8000-00805f9b34fb";
+  const SERVICE_UUID = "0000180d-0000-1000-8000-00805f9b34fb";
+  const CHARACTER_UUID = "00002a37-0000-1000-8000-00805f9b34fb";
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -116,6 +116,40 @@ function useBLE() {
   };
 
   /**
+   * 연결된 기기의 특정 서비스 특성 데이터를 반환하는 함수
+   * 기기에서 받을 serviceUUID, characterUUID 를 넘겨서 해당 특성 값 디코딩 후 데이터 추출
+   * 현재는 heartRate 서비스 특성의 UUID 를 상수값으로 넣어 두어서 추후에는 UUID를 파라미터로 받아서 작동되게 커스텀이 필요합니다.
+   */
+  const monitoring = async (deviceConnection) => {
+    deviceConnection.monitorCharacteristicForService(
+      SERVICE_UUID,
+      CHARACTER_UUID,
+      (error, character) => {
+        if (error) console.log(error);
+
+        if (character) {
+          const rawData = base64.decode(character.value);
+          const firstBitValue = Number(rawData) & 0x01;
+          let HEART_RATE = -1;
+
+          if (firstBitValue === 0) {
+            HEART_RATE = rawData.charCodeAt(1);
+          }
+          // 16비트 데이터 형식인 경우
+          else {
+            HEART_RATE = (rawData.charCodeAt(1) << 8) + rawData.charCodeAt(2);
+          }
+
+          setHeartRate((prevState) => ({
+            ...prevState,
+            data: HEART_RATE,
+          }));
+        }
+      }
+    );
+  };
+
+  /**
    * 원하는 device와 연결
    * allDevices 의 값 중 연결 하려는 device의 deviceId 값 을 파라미터로 전달
    * @param {string} deviceId
@@ -130,80 +164,23 @@ function useBLE() {
         data: [...prevState.data, deviceConnection],
       }));
 
-      deviceConnection.monitorCharacteristicForService(
-        "0000180d-0000-1000-8000-00805f9b34fb",
-        "00002a37-0000-1000-8000-00805f9b34fb",
-        (error, character) => {
-          if (error) console.log(error);
+      /**
+       * serviceUUID 목록 조회
+       * 배열 형태로 반환됩니다.
+       */
+      const serviceUUIDArr = await deviceConnection.services();
 
-          if (character) {
-            const rawData = base64.decode(character.value);
-            const firstBitValue = Number(rawData) & 0x01;
-            let HEART_RATE = -1;
+      /**
+       * 원하는 service의 characteristicUUID 목록 조회
+       * serviceUUID 값을 파라미터로 넘겨야 합니다
+       */
+      const characteristicUUIDArr =
+        await deviceConnection.characteristicsForService(SERVICE_UUID);
 
-            if (firstBitValue === 0) {
-              HEART_RATE = rawData.charCodeAt(1);
-            }
-            // 16비트 데이터 형식인 경우
-            else {
-              HEART_RATE = (rawData.charCodeAt(1) << 8) + rawData.charCodeAt(2);
-            }
-
-            setHeartRate((prevState) => ({
-              ...prevState,
-              data: HEART_RATE,
-            }));
-          }
-        }
-      );
-
-      // const findServiceUUID = await deviceConnection.services();
-
-      // findServiceUUID.forEach((el) => {
-      //   deviceConnection.characteristicsForService(el.uuid).then((x) => {
-      //     x.forEach((y) => {
-
-      //     });
-      //   });
-      // });
-
-      // const findCharacteristicUUID =
-      //   await deviceConnection.characteristicsForService(UUID);
-
-      // findCharacteristicUUID.forEach((el) => {
-      //   deviceConnection
-      //     .readCharacteristicForService(el.serviceUUID, el.uuid)
-      //     .then((x) => {
-      //       console.log(x);
-      //       // deviceConnection.monitorCharacteristicForService(
-      //       //   x.serviceUUID,
-      //       //   x.uuid,
-      //       //   (error, cha) => {
-      //       //     if (error) console.log(error);
-
-      //       //     console.log(cha);
-      //       //   }
-      //       // );
-      //     });
-      // });
-      // streaming(deviceConnection);
+      monitoring(deviceConnection);
     } catch (e) {
       console.log("FAILED TO CONNECT", e);
     }
-  };
-
-  const streaming = (deviceConnection) => {
-    deviceConnection.monitorCharacteristicForService(
-      UUID,
-      CHARACTER,
-      (error, cha) => {
-        if (error) {
-          console.log(error);
-        }
-
-        console.log(cha);
-      }
-    );
   };
 
   /**
@@ -244,4 +221,3 @@ function useBLE() {
 }
 
 export default useBLE;
-
