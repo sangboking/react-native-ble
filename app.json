@@ -34,7 +34,6 @@
       "bundleIdentifier": "com.sanghoondev.mybleapp"
     },
     "android": {
-      "minSdkVersion": 19,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
