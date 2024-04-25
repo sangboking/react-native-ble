@@ -12,7 +12,7 @@ export default function App() {
     scanForDevices,
     allDevices,
     connectedDevice,
-    heartRate,
+    bleData,
   } = useBLE();
 
   //랜더링할 webview 주소 기입해 주세요. 로컬테스트시 아래와 같이 ip주소로 열어야 합니다.
@@ -45,8 +45,8 @@ export default function App() {
 
   // wahoo 심박기계 연결후 심박수 데이터 RN -> WebView 전달
   useEffect(() => {
-    webViewRef.current.postMessage(JSON.stringify(heartRate));
-  }, [heartRate]);
+    webViewRef.current.postMessage(JSON.stringify(bleData));
+  }, [bleData]);
 
   return (
     <>
@@ -73,4 +73,3 @@ export default function App() {
     </>
   );
 }
-

@@ -17,10 +17,19 @@ function useBLE() {
     data: [],
   });
 
-  const [heartRate, setHeartRate] = useState({
-    type: "heartRate",
-    data: 0,
+  const [bleData, setBleData] = useState({
+    type: "bleData",
+    data: {
+      speedCadence: null,
+      power: null,
+    },
   });
+
+  const speedCadenceService = "00001816-0000-1000-8000-00805f9b34fb";
+  const speedCadenceCharacter = "00002a5b-0000-1000-8000-00805f9b34fb";
+
+  const powerService = "00001818-0000-1000-8000-00805f9b34fb";
+  const powerCharacter = "00002a63-0000-1000-8000-00805f9b34fb";
 
   const SERVICE_UUID = "0000180d-0000-1000-8000-00805f9b34fb";
   const CHARACTER_UUID = "00002a37-0000-1000-8000-00805f9b34fb";
@@ -120,30 +129,50 @@ function useBLE() {
    * 기기에서 받을 serviceUUID, characterUUID 를 넘겨서 해당 특성 값 디코딩 후 데이터 추출
    * 현재는 heartRate 서비스 특성의 UUID 를 상수값으로 넣어 두어서 추후에는 UUID를 파라미터로 받아서 작동되게 커스텀이 필요합니다.
    */
-  const monitoring = async (deviceConnection) => {
+  const monitoring = async (
+    deviceConnection,
+    serviceUUID,
+    characterUUID,
+    type
+  ) => {
     deviceConnection.monitorCharacteristicForService(
-      SERVICE_UUID,
-      CHARACTER_UUID,
+      serviceUUID,
+      characterUUID,
       (error, character) => {
         if (error) console.log(error);
 
         if (character) {
-          const rawData = base64.decode(character.value);
-          const firstBitValue = Number(rawData) & 0x01;
-          let HEART_RATE = -1;
+          // const rawData = base64.decode(character.value);
+          // const firstBitValue = Number(rawData) & 0x01;
+          // let HEART_RATE = -1;
 
-          if (firstBitValue === 0) {
-            HEART_RATE = rawData.charCodeAt(1);
-          }
-          // 16비트 데이터 형식인 경우
-          else {
-            HEART_RATE = (rawData.charCodeAt(1) << 8) + rawData.charCodeAt(2);
+          // if (firstBitValue === 0) {
+          //   HEART_RATE = rawData.charCodeAt(1);
+          // }
+          // // 16비트 데이터 형식인 경우
+          // else {
+          //   HEART_RATE = (rawData.charCodeAt(1) << 8) + rawData.charCodeAt(2);
+          // }
+
+          if (type === "speedCadence") {
+            setBleData((prevState) => ({
+              ...prevState,
+              data: {
+                ...prevState.data.power,
+                speedCadence: character.value,
+              },
+            }));
           }
 
-          setHeartRate((prevState) => ({
-            ...prevState,
-            data: HEART_RATE,
-          }));
+          if (type === "power") {
+            setBleData((prevState) => ({
+              ...prevState,
+              data: {
+                ...prevState.data.speedCadence,
+                power: character.value,
+              },
+            }));
+          }
         }
       }
     );
@@ -177,7 +206,14 @@ function useBLE() {
       const characteristicUUIDArr =
         await deviceConnection.characteristicsForService(SERVICE_UUID);
 
-      monitoring(deviceConnection);
+      // monitoring(deviceConnection);
+      monitoring(
+        deviceConnection,
+        speedCadenceService,
+        speedCadenceCharacter,
+        "speedCadence"
+      );
+      monitoring(deviceConnection, powerService, powerCharacter, "power");
     } catch (e) {
       console.log("FAILED TO CONNECT", e);
     }
@@ -201,9 +237,16 @@ function useBLE() {
         ...prevState,
         data: tempArr,
       }));
-      setHeartRate((prevState) => ({
+      // setHeartRate((prevState) => ({
+      //   ...prevState,
+      //   data: 0,
+      // }));
+      setBleData((prevState) => ({
         ...prevState,
-        data: 0,
+        data: {
+          power: null,
+          speedCadence: null,
+        },
       }));
     }
   };
@@ -216,7 +259,7 @@ function useBLE() {
     scanForDevices,
     allDevices,
     connectedDevice,
-    heartRate,
+    bleData,
   };
 }
 
