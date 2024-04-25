@@ -139,7 +139,7 @@ function useBLE() {
       serviceUUID,
       characterUUID,
       (error, character) => {
-        if (error) console.log(error);
+        if (error) return console.log(error);
 
         if (character) {
           // const rawData = base64.decode(character.value);
@@ -158,7 +158,7 @@ function useBLE() {
             setBleData((prevState) => ({
               ...prevState,
               data: {
-                ...prevState.data.power,
+                power: prevState.data.power,
                 speedCadence: character.value,
               },
             }));
@@ -168,7 +168,7 @@ function useBLE() {
             setBleData((prevState) => ({
               ...prevState,
               data: {
-                ...prevState.data.speedCadence,
+                speedCadence: prevState.data.speedCadence,
                 power: character.value,
               },
             }));
@@ -203,17 +203,17 @@ function useBLE() {
        * 원하는 service의 characteristicUUID 목록 조회
        * serviceUUID 값을 파라미터로 넘겨야 합니다
        */
-      const characteristicUUIDArr =
-        await deviceConnection.characteristicsForService(SERVICE_UUID);
+      // const characteristicUUIDArr =
+      //   await deviceConnection.characteristicsForService(SERVICE_UUID);
 
       // monitoring(deviceConnection);
-      monitoring(
+      await monitoring(
         deviceConnection,
         speedCadenceService,
         speedCadenceCharacter,
         "speedCadence"
       );
-      monitoring(deviceConnection, powerService, powerCharacter, "power");
+      await monitoring(deviceConnection, powerService, powerCharacter, "power");
     } catch (e) {
       console.log("FAILED TO CONNECT", e);
     }
@@ -260,6 +260,7 @@ function useBLE() {
     allDevices,
     connectedDevice,
     bleData,
+    setBleData,
   };
 }
 

@@ -9,13 +9,13 @@
           "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to bluetooth devices"
         }
       ],
+      "react-native-ble-plx",
       [
         "expo-build-properties",
         {
           "android": { "usesCleartextTraffic": true, "minSdkVersion": 29 }
         }
-      ],
-      "react-native-ble-plx"
+      ]
     ],
     "name": "my-ble-app",
     "slug": "my-ble-app",

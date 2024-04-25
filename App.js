@@ -13,6 +13,7 @@ export default function App() {
     allDevices,
     connectedDevice,
     bleData,
+    setBleData,
   } = useBLE();
 
   //랜더링할 webview 주소 기입해 주세요. 로컬테스트시 아래와 같이 ip주소로 열어야 합니다.
